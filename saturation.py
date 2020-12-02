@@ -50,6 +50,7 @@ from clausesets import ClauseSet, HeuristicClauseSet, IndexedClauseSet
 import heuristics
 from rescontrol import computeAllResolvents, computeAllFactors
 from subsumption import forwardSubsumption, backwardSubsumption
+from paramodulation import computeAllParamodulates
 
 
 class SearchParams(object):
@@ -140,8 +141,8 @@ class ProofState(object):
         """
         given_clause = self.unprocessed.extractBest()
         given_clause = given_clause.freshVarCopy()
-        if not self.silent:
-            print("#")
+        # if not self.silent:
+        #     print("#")
         if given_clause.isEmpty():
             # We have found an explicit contradiction
             return given_clause
@@ -174,12 +175,13 @@ class ProofState(object):
 
         if(self.params.literal_selection):
             given_clause.selectInferenceLits(self.params.literal_selection)
-        if not self.silent:
-            print("#", given_clause)
+        # if not self.silent:
+        #     print("#", given_clause)
         new = []
         factors    = computeAllFactors(given_clause)
         new.extend(factors)
         resolvents = computeAllResolvents(given_clause, self.processed)
+        paramodulates = computeAllParamodulates(given_clause, self.processed)
         new.extend(resolvents)
         self.proc_clause_count = self.proc_clause_count+1
         self.factor_count = self.factor_count+len(factors)

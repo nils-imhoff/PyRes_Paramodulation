@@ -70,6 +70,14 @@ class ClauseSet(object):
         """
         self.clauses.append(clause)
 
+    def getClause(self, index):
+
+        if self.clauses:
+            clause = self.clauses.pop(index)
+            return clause
+        else:
+            return None        
+
     def extractClause(self, clause):
         """
         Remove a clause to the clause set and return it.
