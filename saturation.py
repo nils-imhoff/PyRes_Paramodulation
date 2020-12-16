@@ -50,7 +50,7 @@ from clausesets import ClauseSet, HeuristicClauseSet, IndexedClauseSet
 import heuristics
 from rescontrol import computeAllResolvents, computeAllFactors
 from subsumption import forwardSubsumption, backwardSubsumption
-from paramodulation import computeAllParamodulates
+from position import getPositionLiterals
 
 
 class SearchParams(object):
@@ -181,7 +181,7 @@ class ProofState(object):
         factors    = computeAllFactors(given_clause)
         new.extend(factors)
         resolvents = computeAllResolvents(given_clause, self.processed)
-        paramodulates = computeAllParamodulates(given_clause, self.processed)
+        getPositionLiterals(given_clause)
         new.extend(resolvents)
         self.proc_clause_count = self.proc_clause_count+1
         self.factor_count = self.factor_count+len(factors)
