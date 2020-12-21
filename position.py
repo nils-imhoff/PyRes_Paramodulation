@@ -23,6 +23,8 @@ def getPositionSubterm(lit):
         erg = getSubterms(a,lit.atom)
         if erg != None:
             positionSubterm.append(erg)
+        else:
+            print("HIER")
     return positionSubterm
 
 def getSubterms(a,l):
@@ -44,5 +46,7 @@ def getSubterms(a,l):
 def getPositionLiterals(clause):
     positionLit = []
     for lit in range(len(clause)):
-        positionLit.append([lit])
+        l1 = clause.getLiteral(lit)
+        if l1.atom[0] == 'eq' and l1.isPositive():
+            positionLit.append(lit)
     return positionLit
