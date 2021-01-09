@@ -17,3 +17,9 @@ __pycache__/subsumption.cpython-38.pyc
 __pycache__/terms.cpython-38.pyc
 __pycache__/unification.cpython-38.pyc
 __pycache__/version.cpython-38.pyc
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/PyRes_Paramodulation.iml
+/.idea/vcs.xml
