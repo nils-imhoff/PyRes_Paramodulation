@@ -40,7 +40,7 @@ from clausesets import ClauseSet, HeuristicClauseSet
 import heuristics
 from rescontrol import computeAllResolvents, computeAllFactors
 from subsumption import forwardSubsumption, backwardSubsumption
-from position import getAllPostions
+import clauses
 
 
 class SimpleProofState(object):
@@ -79,7 +79,8 @@ class SimpleProofState(object):
         factors    = computeAllFactors(given_clause)
         new.extend(factors)
         resolvents = computeAllResolvents(given_clause, self.processed)
-        print(getAllPostions(given_clause))
+        #print(computeAllParamodulates(given_clause, self.processed))
+        #print(given_clause.find(getPositionLiterals(given_clause)))
         new.extend(resolvents)
 
         self.processed.addClause(given_clause)

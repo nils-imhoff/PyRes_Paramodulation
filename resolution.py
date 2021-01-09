@@ -86,8 +86,9 @@ def resolution(clause1, lit1, clause2, lit2):
     if l1.isNegative() == l2.isNegative():
         return None
     sigma = mgu(l1.atom, l2.atom)
-    if sigma == None:
+    if sigma is None:
         return None
+    print("SIGMA",sigma)
     lits1 = [l.instantiate(sigma) for l in clause1.literals if l!=l1]
     lits2 = [l.instantiate(sigma) for l in clause2.literals if l!=l2]
     lits1.extend(lits2)

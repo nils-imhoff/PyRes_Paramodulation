@@ -1,52 +1,28 @@
-import clauses
-from terms import termIsVar, subterm
-import literals
 
+# Class for storing term position
 
-def getAllPostions(clause):
-    positionLit = []
-    positionSubterm = []
-    position = {'lit': positionLit, 'subterms': positionSubterm}
-    for lit in range(len(clause)):
-        l = clause.getLiteral(lit)
-        positionLit.append([lit])
-        ap = getPositionSubterm(l)
-        positionSubterm.append(ap)
-    position['lit'].extend(positionLit)
-    position['subterms'].extend(positionSubterm)
-    return position
+class Position(object):
+    def __init__(self, subst, l=None):
+        if l is None:
+            l = []
+        self.l = l
+        self.subst = subst
 
+    @classmethod
+    def create_new(cls, subst, l):
+        return cls(subst=subst, l=l[1:])
 
-def getPositionSubterm(lit):
-    positionSubterm = []
-    for a in range(len(lit.atom)):
-        erg = getSubterms(a,lit.atom)
-        if erg != None:
-            positionSubterm.append(erg)
-        else:
-            print("HIER")
-    return positionSubterm
+    def add_first(self, i):
+        self.l.insert(0, i)
 
-def getSubterms(a,l):
-    positionSubterm = []
-    t = subterm(l, [a])
-    if not termIsVar(t) and t != None:
-       print("A A A" + str(a))
-       positionSubterm.append([a])
-    elif t == None or termIsVar(t):
-        return None
-    if isinstance(t, list):
-        for b in range(len(t)):
-         erg = getSubterms(b,t)
-         if erg != None:
-            positionSubterm.append(erg)
-    return positionSubterm
+    def get_first(self):
+        return self.l.get(0)
 
+    def is_final(self):
+        return len(self.l) == 0
 
-def getPositionLiterals(clause):
-    positionLit = []
-    for lit in range(len(clause)):
-        l1 = clause.getLiteral(lit)
-        if l1.atom[0] == 'eq' and l1.isPositive():
-            positionLit.append(lit)
-    return positionLit
+    def get_unifier(self):
+        return self.subst
+
+    def pop(self):
+        return self.create_new(self.subst, self.l)
