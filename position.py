@@ -16,7 +16,7 @@ class Position(object):
         self.l.insert(0, i)
 
     def get_first(self):
-        return self.l.get(0)
+        return self.l[0]
 
     def is_final(self):
         return len(self.l) == 0

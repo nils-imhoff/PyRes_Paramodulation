@@ -339,7 +339,7 @@ class Literal(object):
 
     # Replace term on position position by the term term and substitute everything else
     def replace_substitute(self, pos, term):
-        if pos.final():
+        if pos.is_final():
             return None
         new_terms = []
         for i in range(len(self.atom)):

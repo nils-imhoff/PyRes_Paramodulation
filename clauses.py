@@ -248,18 +248,18 @@ class Clause(Derivable):
             if term_positions2 is not None:
                 for termPosition2 in term_positions2:
                     termPosition2.add_first(l)
-                    term_positions.append(term_positions2)
+                    term_positions.extend(term_positions2)
 
         return term_positions
 
     # Replace term on position position by the term term and substitute everything else
     def replace_substitute(self, pos, term):
-        if pos.final():
+        if pos.is_final():
             return None
         new_literals = []
         for i in range(len(self)):
             if i == pos.get_first():
-                l: object = self.getLiteral(i).replaceOrSubstitute(pos.pop(), term)
+                l: object = self.getLiteral(i).replace_substitute(pos.pop(), term)
                 if l is None:
                     return None
                 new_literals.append(l)

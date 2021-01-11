@@ -48,9 +48,9 @@ from idents import Ident
 from lexer import Token,Lexer
 from clausesets import ClauseSet, HeuristicClauseSet, IndexedClauseSet
 import heuristics
+from paracontrol import computeAllParamodulates
 from rescontrol import computeAllResolvents, computeAllFactors
 from subsumption import forwardSubsumption, backwardSubsumption
-from position import getPositionLiterals
 
 
 class SearchParams(object):
@@ -181,8 +181,9 @@ class ProofState(object):
         factors    = computeAllFactors(given_clause)
         new.extend(factors)
         resolvents = computeAllResolvents(given_clause, self.processed)
-        getPositionLiterals(given_clause)
+        modulated = computeAllParamodulates(given_clause, self.processed)
         new.extend(resolvents)
+        new.extend(modulated)
         self.proc_clause_count = self.proc_clause_count+1
         self.factor_count = self.factor_count+len(factors)
         self.resolvent_count = self.resolvent_count+len(resolvents)

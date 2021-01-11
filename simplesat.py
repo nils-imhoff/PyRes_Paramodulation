@@ -35,11 +35,12 @@ Email: schulz@eprover.org
 
 import unittest
 from idents import Ident
-from lexer import Token,Lexer
+from lexer import Token, Lexer
 from clausesets import ClauseSet, HeuristicClauseSet
 import heuristics
 from rescontrol import computeAllResolvents, computeAllFactors
 from subsumption import forwardSubsumption, backwardSubsumption
+from paracontrol import computeAllParamodulates
 import clauses
 
 
@@ -54,15 +55,16 @@ class SimpleProofState(object):
     clause and the processed claues. These new clauses are added to
     the set of unprocessed clauses.
     """
+
     def __init__(self, clauses):
         """
         Initialize the proof state with a set of clauses.
         """
-        self.unprocessed = ClauseSet()                                    
-        self.processed   = ClauseSet()
+        self.unprocessed = ClauseSet()
+        self.processed = ClauseSet()
         for c in clauses.clauses:
             self.unprocessed.addClause(c)
-        
+
     def processClause(self):
         """
         Pick a clause from unprocessed and process it. If the empty
@@ -74,13 +76,13 @@ class SimpleProofState(object):
         if given_clause.isEmpty():
             # We have found an explicit contradiction
             return given_clause
-        
+
         new = []
-        factors    = computeAllFactors(given_clause)
+        factors = computeAllFactors(given_clause)
         new.extend(factors)
         resolvents = computeAllResolvents(given_clause, self.processed)
-        #print(computeAllParamodulates(given_clause, self.processed))
-        #print(given_clause.find(getPositionLiterals(given_clause)))
+        print(computeAllParamodulates(given_clause, self.processed))
+        # print(given_clause.find(getPositionLiterals(given_clause)))
         new.extend(resolvents)
 
         self.processed.addClause(given_clause)
@@ -97,7 +99,7 @@ class SimpleProofState(object):
         """
         while self.unprocessed:
             res = self.processClause()
-            if res != None:
+            if res is not None:
                 return res
         else:
             return None
@@ -107,6 +109,7 @@ class TestSimpleProver(unittest.TestCase):
     """
     Unit test class for simple resolution inference control.
     """
+
     def setUp(self):
         """
         Setup function for clause/literal unit tests. Initialize
@@ -144,18 +147,17 @@ cnf(not_p, axiom, p(b)).
 
         if provable:
             self.assertNotEqual(res, None)
-            if res == None: # pragma: nocover
+            if res is None:  # pragma: nocover
                 print("# Bug: Should have found a proof!")
             else:
                 print("# Proof found")
         else:
             self.assertEqual(res, None)
-            if res != None: # pragma: nocover
+            if res is not None:  # pragma: nocover
                 print("# Bug: Should not have  found a proof!")
             else:
                 print("# No proof found")
-                
-        
+
     def testSaturation(self):
         """
         Test that saturation works.
@@ -163,6 +165,7 @@ cnf(not_p, axiom, p(b)).
         self.evalSatResult(self.spec1, True)
         self.evalSatResult(self.spec2, True)
         self.evalSatResult(self.spec3, False)
+
 
 if __name__ == '__main__':
     unittest.main()

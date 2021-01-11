@@ -6,7 +6,7 @@ def computeAllParamodulates(clause, clauseset):
     rewrite_rules = createRewriteRule(clause)
     if rewrite_rules:
         for i in range(len(clauseset)):
-            res.extend(paramodulate(clause, clauseset.getClause(i), rewrite_rules))
+            res.extend(paramodulate(clause, clauseset.clauses[i], rewrite_rules))
 
     return res
 
