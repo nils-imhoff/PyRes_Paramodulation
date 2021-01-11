@@ -38,9 +38,9 @@ def createRewriteRule(given_clause):
 def paramodulate(given_clause, second_clause, rewrite_rules):
     res = []
     for r in rewrite_rules:
-        res.append(r.apply(given_clause))
+        res.extend(r.apply(given_clause))
 
     for r in rewrite_rules:
-        res.append(r.apply(second_clause))
+        res.extend(r.apply(second_clause))
 
     return res

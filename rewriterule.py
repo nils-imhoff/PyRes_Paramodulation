@@ -21,7 +21,6 @@ class rewriteRule(object):
     def apply(self, clause):
         res = []
         positions = clause.find(self.frm)
-        print(positions)
         if positions is not None:
             for pos in positions:
                 new_clause = clause.replace_substitute(pos, pos.get_unifier().apply(self.to))
