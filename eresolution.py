@@ -23,6 +23,6 @@ def eresolution(clause):
                         else:
                             others.append(lit2.instantiate(unifier))
 
-                new_Clause = Clause(others)
+                new_clause: Clause = Clause(others)
 
-                res.append(new_Clause)
+                res.append(new_clause)
