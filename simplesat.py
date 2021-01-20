@@ -34,6 +34,7 @@ Email: schulz@eprover.org
 """
 
 import unittest
+from eresolution import eresolution
 from idents import Ident
 from lexer import Token, Lexer
 from clausesets import ClauseSet, HeuristicClauseSet
@@ -80,10 +81,13 @@ class SimpleProofState(object):
         new = []
         factors = computeAllFactors(given_clause)
         new.extend(factors)
+        eresolvents = eresolution(given_clause)
+        new.extend(eresolvents)
         resolvents = computeAllResolvents(given_clause, self.processed)
-        print(computeAllParamodulates(given_clause, self.processed))
-        # print(given_clause.find(getPositionLiterals(given_clause)))
         new.extend(resolvents)
+        modulated = computeAllParamodulates(given_clause, self.processed)
+        if modulated:
+            new.extend(modulated)
 
         self.processed.addClause(given_clause)
 

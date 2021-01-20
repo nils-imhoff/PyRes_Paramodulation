@@ -1,7 +1,12 @@
-#
-# Representation of a paramodulation rewriting rule
-# This class contains data for a single rewrite rule, so the equalities dont have to be looked up over and over again.
-#
+"""
+Representation of a paramodulation rewriting rule
+This class contains data for a single rewrite rule, so the equalities dont have to be looked up over and over again.
+
+"""
+from derivations import flatDerivation
+from terms import termIsVar
+
+
 class rewriteRule(object):
     def __init__(self, frm, to, literals, given_clause):
         self.frm = frm
@@ -30,5 +35,6 @@ class rewriteRule(object):
                         if l is None:
                             print("rewrite")
                         new_clause.addLiteral(l)
+                    new_clause.setDerivation(flatDerivation("paramodulation", [self.clause, clause]))
                     res.append(new_clause)
         return res

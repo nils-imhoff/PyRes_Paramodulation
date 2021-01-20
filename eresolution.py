@@ -1,8 +1,12 @@
 from clauses import Clause
 from unification import mgu
 
+"""
+E-resolution inference step
+"""
 
-def eresolution(clause):
+
+def eresolution(clause) -> list:
     res = []
     for l in range(len(clause)):
         lit = clause.getLiteral(l)
@@ -26,3 +30,4 @@ def eresolution(clause):
                 new_clause: Clause = Clause(others)
 
                 res.append(new_clause)
+    return res
