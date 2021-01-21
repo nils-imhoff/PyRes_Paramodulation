@@ -2,6 +2,9 @@ from unittest import TestCase
 
 import clauses
 import paracontrol
+import position
+import rewriterule
+import substitutions
 from lexer import Lexer
 
 
@@ -9,24 +12,14 @@ class TestClause(TestCase):
 
     def setUp(self):
         """
-        Setup function for resolution testing
+        Setup function for paramodulation testing
         """
-        print()
         self.spec = """
 cnf(commutativity_of_addition,axiom,
     ( add(A,B) = add(B,A) )).
 
 cnf(associativity_of_addition,axiom,
     ( add(A,add(B,C)) = add(add(A,B),C) )).
-
-cnf(addition_inverts_subtraction1,axiom,
-    ( subtract(add(A,B),B) = A )).
-
-cnf(addition_inverts_subtraction2,axiom,
-    ( A = subtract(add(A,B),B)  )).
-
-cnf(commutativity1,axiom,
-    ( add(subtract(A,B),C) = subtract(add(A,C),B) )).
 
 cnf(commutativity2,axiom,
     ( subtract(add(A,B),C) = add(subtract(A,C),B) )).
@@ -36,10 +29,6 @@ cnf(add_substitution1,axiom,
     | C != add(A,D)
     | C = add(B,D) )).
 
-cnf(add_substitution2,axiom,
-    ( A != B
-    | C != add(D,A)
-    | C != add(D,B) )).
 
 cnf(prove_equation,negated_conjecture,
     ( add(add(a,b),c) != add(a,add(b,c)) )).
@@ -50,10 +39,6 @@ cnf(prove_equation,negated_conjecture,
         self.c3 = clauses.parseClause(lex)
         self.c4 = clauses.parseClause(lex)
         self.c5 = clauses.parseClause(lex)
-        self.c6 = clauses.parseClause(lex)
-        self.c7 = clauses.parseClause(lex)
-        self.c8 = clauses.parseClause(lex)
-        self.c9 = clauses.parseClause(lex)
 
     def test_find_should_succeed_term_is_found(self):
         pos = self.c1.find(['add', 'A', 'B'])
@@ -73,7 +58,7 @@ cnf(prove_equation,negated_conjecture,
 
     def test_createRewriteRule_should_succeed_if_rule_is_created(self):
         rewrite_rules1 = paracontrol.createRewriteRule(self.c1)
-        rewrite_rules2 = paracontrol.createRewriteRule(self.c7)
+        rewrite_rules2 = paracontrol.createRewriteRule(self.c4)
         self.assertEqual(2, len(rewrite_rules1))
         self.assertEqual(['add', 'A', 'B'], rewrite_rules1[0].get_from())
         self.assertEqual(['add', 'B', 'A'], rewrite_rules1[0].get_to())
@@ -90,8 +75,23 @@ cnf(prove_equation,negated_conjecture,
         self.assertEqual(2, len(rewrite_rules2[0].get_literals()))
         self.assertEqual(['=', 'A', 'B'], rewrite_rules2[0].get_literals()[0].atom)
         self.assertEqual(['=', 'C', ['add', 'A', 'D']], rewrite_rules2[0].get_literals()[1].atom)
-        self.assertEqual(self.c7, rewrite_rules2[0].clause)
+        self.assertEqual(self.c4, rewrite_rules2[0].clause)
 
     def test_createRewriteRule_should_succeed_if_no_rule_created(self):
-        rewrite_rules = paracontrol.createRewriteRule(self.c9)
+        rewrite_rules = paracontrol.createRewriteRule(self.c5)
         self.assertEqual(0, len(rewrite_rules))
+
+    def test_replaceSubstitute_should_succeed_if_new_clause_is_correct(self):
+        subst = substitutions.Substitution()
+        pos = position.Position(subst, [0, 1, 1, ])
+        clause = self.c3.replaceSubstitute(pos, ['add', 'B', 'A'])
+        self.assertEqual(['=', ['subtract', ['add', 'B', 'A'], 'C'], ['add', ['subtract', 'A', 'C'], 'B']],
+                         clause.literals[0].atom)
+
+    def test_apply_should_succeed_if_new_clauses_are_correct(self):
+        to = ['add', 'B', 'A']
+        frm = ['add', 'A', 'B']
+        rewrite_rule = rewriterule.rewriteRule(frm, to, [], self.c1)
+        res = rewrite_rule.apply(self.c3)
+        self.assertEqual(['=', ['subtract', ['add', 'B', 'A'], 'C'], ['add', ['subtract', 'A', 'C'], 'B']],
+                         res[0].getLiteral(0).atom)

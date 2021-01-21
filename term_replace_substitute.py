@@ -14,7 +14,7 @@ def termReplaceSubstitute(term1, pos, term2):
     if isinstance(term1, list):
         for i in range(len(term1)):
             if i == pos.get_first():
-                t = termReplaceSubstitute(subterm(term1, [i]), pos, term2)
+                t = termReplaceSubstitute(subterm(term1, [i]), pos.pop(), term2)
                 if t is None:
                     print("term1")
                 new_parameters.append(t)
