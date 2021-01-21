@@ -69,14 +69,11 @@ Germany
 Email: schulz@eprover.org
 """
 
-import unittest
-from lexer import Token, Lexer
-from signature import Signature
-from terms import *
-from substitutions import BTSubst
-from matching import match
 from findPosition import find_term
-from term_replace_substitute import term_replace_substitute
+from matching import match
+from substitutions import BTSubst
+from term_replace_substitute import termReplaceSubstitute
+from terms import *
 
 
 def parseAtom(lexer):
@@ -338,13 +335,13 @@ class Literal(object):
         return term_positions
 
     # Replace term on position position by the term term and substitute everything else
-    def replace_substitute(self, pos, term):
+    def replaceSubstitute(self, pos, term):
         if pos.is_final():
             return None
         new_terms = []
         for i in range(len(self.atom)):
             if i == pos.get_first():
-                t = term_replace_substitute(self.atom[i], pos.pop(), term)
+                t = termReplaceSubstitute(self.atom[i], pos.pop(), term)
                 if t is None:
                     return None
                 new_terms.append(t)

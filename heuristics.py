@@ -43,8 +43,9 @@ Email: schulz@eprover.org
 """
 
 import unittest
-from lexer import Lexer
+
 import clauses
+from lexer import Lexer
 
 
 class ClauseEvaluationFunction(object):
@@ -55,42 +56,43 @@ class ClauseEvaluationFunction(object):
     to be able to store information, either from initialization, or
     from previous calls.
     """
-        
-    def __init__(self): # pragma: nocover
+
+    def __init__(self):  # pragma: nocover
         """
         Initialize the evaluaton function.
         """
         self.name = "Virtual Base"
-        
-    def __repr__(self): # pragma: nocover
+
+    def __repr__(self):  # pragma: nocover
         """
         Return a string representation of the clause.
         """
-        return "ClauseEvalFun(%s)"%(self.name,)
+        return "ClauseEvalFun(%s)" % (self.name,)
 
-    def __call__(self, clause): 
+    def __call__(self, clause):
         """
         Provide this as a callable function.
         """
         return self.hEval(clause)
-   
-    def hEval(self, clause): # pragma: nocover
+
+    def hEval(self, clause):  # pragma: nocover
         """
         This needs to be overloaded...
         """
         assert False and "Virtual base class is not callable"
-        
+
 
 class FIFOEvaluation(ClauseEvaluationFunction):
     """
     Class implementing first-in-first-out evaluation - i.e. clause
     evalutations increase over time (and independent of the clause).
     """
+
     def __init__(self):
         """
         Initialize object.
         """
-        self.name        = "FIFOEval"
+        self.name = "FIFOEval"
         self.fifocounter = 0
 
     def hEval(self, clause):
@@ -105,13 +107,14 @@ class SymbolCountEvaluation(ClauseEvaluationFunction):
     """
     Implement a standard symbol counting heuristic. 
     """
+
     def __init__(self, fweight=2, vweight=1):
         """
         Initialize heuristic.
         """
         self.fweight = fweight
         self.vweight = vweight
-        self.name    = "SymbolCountEval(%f,%f)"%(fweight,vweight)
+        self.name = "SymbolCountEval(%f,%f)" % (fweight, vweight)
 
     def hEval(self, clause):
         """
@@ -128,6 +131,7 @@ class EvalStructure(object):
     paired with a counter, and clauses are picked according to each
     function in a weighted round-robin scheme.
     """
+
     def __init__(self, eval_descriptor):
         """
         Initialize ths structure. The argument is a list of pairs,
@@ -136,7 +140,7 @@ class EvalStructure(object):
         """
         assert len(eval_descriptor)
         self.eval_funs = [pair[0] for pair in eval_descriptor]
-        self.eval_vec  = [pair[1] for pair in eval_descriptor]
+        self.eval_vec = [pair[1] for pair in eval_descriptor]
         self.current = 0
         self.current_count = self.eval_vec[0]
 
@@ -152,20 +156,20 @@ class EvalStructure(object):
         Return the index of the next evaluation function of the scheme.
         """
         while not self.current_count:
-            self.current = (self.current+1) % len(self.eval_vec)
+            self.current = (self.current + 1) % len(self.eval_vec)
             self.current_count = self.eval_vec[self.current]
         self.current_count = self.current_count - 1
         return self.current
-            
 
-FIFOEval        = EvalStructure([(FIFOEvaluation(),1)])
+
+FIFOEval = EvalStructure([(FIFOEvaluation(), 1)])
 """
 Strict first-in/first out evaluation. This is obviously fair
 (i.e. every clause will be picked eventuall), but not a good search
 strategy. 
 """
 
-SymbolCountEval = EvalStructure([(SymbolCountEvaluation(2,1),1)])
+SymbolCountEval = EvalStructure([(SymbolCountEvaluation(2, 1), 1)])
 """
 Strict symbol counting (a smaller clause is always better than a
 larger clause). This is only fair if subsumption or a similar
@@ -174,8 +178,8 @@ clauses p(X1), p(X2), p(X3),.... that are all smaller than q(f(X)), so
 that the latter is never selected.
 """
 
-PickGiven5      = EvalStructure([(SymbolCountEvaluation(2,1),5),
-                                 (FIFOEvaluation(),1)])
+PickGiven5 = EvalStructure([(SymbolCountEvaluation(2, 1), 5),
+                            (FIFOEvaluation(), 1)])
 """
 Experiences have shown that picking always the smallest clause (by
 symbol count) isn't optimal, but that it pays off to interleave smallest
@@ -185,27 +189,28 @@ has stated that "the optimal pick-given ratio is five." Since he is a
 very smart person we use this value here.
 """
 
-PickGiven2      = EvalStructure([(SymbolCountEvaluation(2,1),2),
-                                 (FIFOEvaluation(),1)])
+PickGiven2 = EvalStructure([(SymbolCountEvaluation(2, 1), 2),
+                            (FIFOEvaluation(), 1)])
 """
 See above, but now with a pick-given ration of 2 for easier testing.
 """
 
-
 GivenClauseHeuristics = {
-    "FIFO"       : FIFOEval,
+    "FIFO": FIFOEval,
     "SymbolCount": SymbolCountEval,
-    "PickGiven5" : PickGiven5,
-    "PickGiven2" : PickGiven2}
+    "PickGiven5": PickGiven5,
+    "PickGiven2": PickGiven2}
 """
 Table associating name and evaluation function, so that we can select
 the function by name.
 """
 
+
 class TestHeuristics(unittest.TestCase):
     """
     Test heuristic evaluation functions.
     """
+
     def setUp(self):
         """
         Setup function for tests. Create some clauses to test
@@ -213,7 +218,7 @@ class TestHeuristics(unittest.TestCase):
         """
 
         print()
-        self.spec ="""
+        self.spec = """
 cnf(c1,axiom,(f(X1,X2)=f(X2,X1))).
 cnf(c2,axiom,(f(X1,f(X2,X3))=f(f(X1,X2),X3))).
 cnf(c3,axiom,(g(X1,X2)=g(X2,X1))).
@@ -232,7 +237,6 @@ cnf(c8,axiom,(c=d|h(i(a))!=h(i(e)))).
         self.c6 = clauses.parseClause(lexer)
         self.c7 = clauses.parseClause(lexer)
         self.c8 = clauses.parseClause(lexer)
-        
 
     def testFIFO(self):
         """
@@ -247,19 +251,19 @@ cnf(c8,axiom,(c=d|h(i(a))!=h(i(e)))).
         e6 = eval(self.c6)
         e7 = eval(self.c7)
         e8 = eval(self.c8)
-        self.assertTrue(e1<e2)
-        self.assertTrue(e2<e3)
-        self.assertTrue(e3<e4)
-        self.assertTrue(e4<e5)
-        self.assertTrue(e5<e6)
-        self.assertTrue(e6<e7)
-        self.assertTrue(e7<e8)
+        self.assertTrue(e1 < e2)
+        self.assertTrue(e2 < e3)
+        self.assertTrue(e3 < e4)
+        self.assertTrue(e4 < e5)
+        self.assertTrue(e5 < e6)
+        self.assertTrue(e6 < e7)
+        self.assertTrue(e7 < e8)
 
     def testSymbolCount(self):
         """
         Test that symbol counting works as expected.
         """
-        eval = SymbolCountEvaluation(2,1)
+        eval = SymbolCountEvaluation(2, 1)
         e1 = eval(self.c1)
         e2 = eval(self.c2)
         e3 = eval(self.c3)
@@ -268,30 +272,31 @@ cnf(c8,axiom,(c=d|h(i(a))!=h(i(e)))).
         e6 = eval(self.c6)
         e7 = eval(self.c7)
         e8 = eval(self.c8)
-        self.assertEqual(e1, self.c1.weight(2,1))
-        self.assertEqual(e2, self.c2.weight(2,1))
-        self.assertEqual(e3, self.c3.weight(2,1))
-        self.assertEqual(e4, self.c4.weight(2,1))
-        self.assertEqual(e5, self.c5.weight(2,1))
-        self.assertEqual(e6, self.c6.weight(2,1))
-        self.assertEqual(e7, self.c7.weight(2,1))
-        self.assertEqual(e8, self.c8.weight(2,1))
+        self.assertEqual(e1, self.c1.weight(2, 1))
+        self.assertEqual(e2, self.c2.weight(2, 1))
+        self.assertEqual(e3, self.c3.weight(2, 1))
+        self.assertEqual(e4, self.c4.weight(2, 1))
+        self.assertEqual(e5, self.c5.weight(2, 1))
+        self.assertEqual(e6, self.c6.weight(2, 1))
+        self.assertEqual(e7, self.c7.weight(2, 1))
+        self.assertEqual(e8, self.c8.weight(2, 1))
 
     def testEvalStructure(self):
         """
         Test composite evaluations.
         """
-        eval_funs = EvalStructure([(SymbolCountEvaluation(2,1),2),
-                                   (FIFOEvaluation(),1)])
-        
+        eval_funs = EvalStructure([(SymbolCountEvaluation(2, 1), 2),
+                                   (FIFOEvaluation(), 1)])
+
         evals = eval_funs.evaluate(self.c1)
         self.assertEqual(len(evals), 2)
-        self.assertEqual(eval_funs.nextEval(),0)
-        self.assertEqual(eval_funs.nextEval(),0)
-        self.assertEqual(eval_funs.nextEval(),1)
-        self.assertEqual(eval_funs.nextEval(),0)
-        self.assertEqual(eval_funs.nextEval(),0)
-        self.assertEqual(eval_funs.nextEval(),1)
+        self.assertEqual(eval_funs.nextEval(), 0)
+        self.assertEqual(eval_funs.nextEval(), 0)
+        self.assertEqual(eval_funs.nextEval(), 1)
+        self.assertEqual(eval_funs.nextEval(), 0)
+        self.assertEqual(eval_funs.nextEval(), 0)
+        self.assertEqual(eval_funs.nextEval(), 1)
+
 
 if __name__ == '__main__':
     unittest.main()

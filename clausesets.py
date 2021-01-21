@@ -34,19 +34,22 @@ Email: schulz@eprover.org
 """
 
 import unittest
-from lexer import Lexer
-from signature import Signature
-from literals import parseLiteral
-from clauses import Clause, parseClause
+
+from clauses import parseClause
 from heuristics import PickGiven2
 from indexing import ResolutionIndex, SubsumptionIndex
+from lexer import Lexer
+from literals import parseLiteral
+from signature import Signature
+
 
 class ClauseSet(object):
     """
     A class representing a clause set (or, more precisely,
     a multi-set of clauses).
     """
-    def __init__(self, clauses = []):
+
+    def __init__(self, clauses=[]):
         """
         Initialize the clause.
         """
@@ -76,7 +79,7 @@ class ClauseSet(object):
             clause = self.clauses.pop(index)
             return clause
         else:
-            return None        
+            return None
 
     def extractClause(self, clause):
         """
@@ -134,7 +137,6 @@ class ClauseSet(object):
         ClauseSet, we just return all clauses in the set.
         """
         return self.clauses
-        
 
     def parse(self, lexer):
         """
@@ -145,7 +147,7 @@ class ClauseSet(object):
         while lexer.LookLit() == "cnf":
             clause = parseClause(lexer)
             self.addClause(clause)
-            count = count+1
+            count = count + 1
         return count
 
 
@@ -158,13 +160,14 @@ class HeuristicClauseSet(ClauseSet):
     according to all criteria. The clause set support extraction of
     the "best" clause according to any of the configured heuristics.
     """
+
     def __init__(self, eval_functions):
         """
         Initialize the clause.
         """
-        self.clauses  = []
+        super().__init__()
+        self.clauses = []
         self.eval_functions = eval_functions
-
 
     def addClause(self, clause):
         """
@@ -187,7 +190,7 @@ class HeuristicClauseSet(ClauseSet):
             for i in range(1, len(self.clauses)):
                 if self.clauses[i].evaluation[heuristic_index] < besteval:
                     besteval = self.clauses[i].evaluation[heuristic_index]
-                    best     = i
+                    best = i
             return self.clauses.pop(best)
         else:
             return None
@@ -200,13 +203,13 @@ class HeuristicClauseSet(ClauseSet):
         return self.extractBestByEval(self.eval_functions.nextEval())
 
 
-
 class IndexedClauseSet(ClauseSet):
     """
     This is a normal clause set, augmented by indices that speeds up
     the finding of resolution and subsumption partners.
     """
-    def __init__(self, clauses = []):
+
+    def __init__(self, clauses=[]):
         """
         Create the two indices and call the superclass initializer. 
         """
@@ -255,13 +258,14 @@ class TestClauseSets(unittest.TestCase):
     """
     Unit test class for clause sets.
     """
+
     def setUp(self):
         """
         Setup function for clause/literal unit tests. Initialize
         variables needed throughout the tests.
         """
         print()
-        self.spec ="""
+        self.spec = """
 %------------------------------------------------------------------------------
 % File     : PUZ001-1 : TPTP v4.1.0. Released v1.0.0.
 % Domain   : Puzzles
@@ -358,12 +362,11 @@ cnf(prove_neither_charles_nor_butler_did_it,negated_conjecture,
         oldlen = len(clauses)
         c = clauses.clauses[0]
         clauses.extractClause(c)
-        self.assertEqual(len(clauses), oldlen-1)
+        self.assertEqual(len(clauses), oldlen - 1)
 
         sig = Signature()
         clauses.collectSig(sig)
         print(sig)
-
 
     def testClauseSetHeuristics(self):
         """
@@ -399,7 +402,6 @@ cnf(prove_neither_charles_nor_butler_did_it,negated_conjecture,
         c = clauses.extractFirst()
         self.assertEqual(c, None)
 
-
     def testIndexedClauseSetChanges(self):
         """
         Test that clause set initialization and parsing work.
@@ -411,11 +413,10 @@ cnf(prove_neither_charles_nor_butler_did_it,negated_conjecture,
         oldlen = len(clauses)
         c = clauses.clauses[0]
         clauses.extractClause(c)
-        self.assertEqual(len(clauses), oldlen-1)
+        self.assertEqual(len(clauses), oldlen - 1)
 
         sig = clauses.collectSig()
         print(sig)
-
 
     def testResPositions(self):
         """
@@ -451,8 +452,6 @@ cnf(prove_neither_charles_nor_butler_did_it,negated_conjecture,
         pos = clauses.getResolutionLiterals(lit)
         self.assertTrue(len(pos), 6)
         print(pos)
-
-
 
 
 if __name__ == '__main__':

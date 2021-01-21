@@ -253,7 +253,7 @@ class Clause(Derivable):
         return term_positions
 
     # Replace term on position position by the term term and substitute everything else
-    def replace_substitute(self, pos, term):
+    def replaceSubstitute(self, pos, term):
         if pos.is_final():
             return None
         new_literals = []

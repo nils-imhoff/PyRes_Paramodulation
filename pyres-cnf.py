@@ -61,15 +61,16 @@ Email: schulz@eprover.org
 
 """
 
-import sys
 import getopt
-from version import version
-from lexer import Token,Lexer
-from derivations import enableDerivationOutput,disableDerivationOutput
+import sys
+
 from clausesets import ClauseSet
+from derivations import enableDerivationOutput, disableDerivationOutput
 from heuristics import GivenClauseHeuristics
-from saturation import SearchParams,ProofState
+from lexer import Lexer
 from litselection import LiteralSelectors
+from saturation import SearchParams, ProofState
+from version import version
 
 
 def processOptions(opts):
@@ -79,28 +80,29 @@ def processOptions(opts):
     params = SearchParams()
     for opt, optarg in opts:
         if opt == "-h" or opt == "--help":
-            print("pyres-cnf.py "+version)
+            print("pyres-cnf.py " + version)
             print(__doc__)
             sys.exit()
-        elif opt=="-t" or opt == "--delete-tautologies":
+        elif opt == "-t" or opt == "--delete-tautologies":
             params.delete_tautologies = True
-        elif opt=="-f" or opt == "--forward-subsumption":
+        elif opt == "-f" or opt == "--forward-subsumption":
             params.forward_subsumption = True
-        elif opt=="-b" or opt == "--backward-subsumption":
+        elif opt == "-b" or opt == "--backward-subsumption":
             params.backward_subsumption = True
-        elif opt=="-H" or opt == "--given-clause-heuristic":
+        elif opt == "-H" or opt == "--given-clause-heuristic":
             try:
                 params.heuristics = GivenClauseHeuristics[optarg]
             except KeyError:
                 print("Unknown clause evaluation function", optarg)
                 sys.exit(1)
-        elif opt=="-n" or opt == "--neg-lit-selection":
+        elif opt == "-n" or opt == "--neg-lit-selection":
             try:
                 params.literal_selection = LiteralSelectors[optarg]
             except KeyError:
                 print("Unknown literal selection function", optarg)
                 sys.exit(1)
     return params
+
 
 if __name__ == '__main__':
     try:
@@ -113,7 +115,7 @@ if __name__ == '__main__':
                                         "given-clause-heuristic=",
                                         "neg-lit-selection="])
     except getopt.GetoptError as err:
-        print(sys.argv[0],":", err)
+        print(sys.argv[0], ":", err)
         sys.exit(1)
 
     params = processOptions(opts)
@@ -128,8 +130,6 @@ if __name__ == '__main__':
 
     state = ProofState(params, problem)
     res = state.saturate()
-
-
 
     print(state.statisticsStr())
     if res != None:

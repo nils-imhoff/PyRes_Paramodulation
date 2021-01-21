@@ -44,11 +44,11 @@ Email: schulz@eprover.org
 """
 
 import unittest
-from idents import Ident
+
+import heuristics
+from clausesets import ClauseSet, HeuristicClauseSet, IndexedClauseSet
 from eresolution import eresolution
 from lexer import Lexer
-from clausesets import ClauseSet, HeuristicClauseSet, IndexedClauseSet
-import heuristics
 from paracontrol import computeAllParamodulates
 from rescontrol import computeAllResolvents, computeAllFactors
 from subsumption import forwardSubsumption, backwardSubsumption

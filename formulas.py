@@ -69,15 +69,11 @@ Germany
 Email: schulz@eprover.org
 """
 
-import unittest
 from collections import deque
-from lexer import Token,Lexer
-from derivations import Derivable,Derivation,flatDerivation,toggleDerivationOutput
-from signature import Signature
+
+from derivations import Derivable, Derivation, flatDerivation, toggleDerivationOutput
+from literals import parseLiteral
 from terms import *
-import substitutions
-from literals import Literal, parseLiteral, parseLiteralList,\
-     literalList2String, litInLitList, oppositeInLitList
 
 
 class Formula(object):

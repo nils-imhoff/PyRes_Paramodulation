@@ -48,8 +48,9 @@ Germany
 Email: schulz@eprover.org
 """
 
-import terms
 import unittest
+
+import terms
 
 
 class Substitution(object):
@@ -64,7 +65,7 @@ class Substitution(object):
     A counter to generate fresh variables.
     """
 
-    def __init__(self, init = []):
+    def __init__(self, init=[]):
         """
         Initialize. The optional argument is a list of variable/term
         pairs representing the initial binding. This is taken as-is,
@@ -72,16 +73,16 @@ class Substitution(object):
         """
         self.subst = {}
         for i in init:
-            self.subst[i[0]]=i[1]
+            self.subst[i[0]] = i[1]
 
     def __repr__(self):
         """
         Return a print representation of the substitution.
         """
-        return "{"+\
-               ",".join([i+"<-"+terms.term2String(self.subst[i])
-                         for i in self.subst])\
-                         +"}"
+        return "{" + \
+               ",".join([i + "<-" + terms.term2String(self.subst[i])
+                         for i in self.subst]) \
+               + "}"
 
     def __call__(self, term):
         """
@@ -121,7 +122,7 @@ class Substitution(object):
         if terms.termIsVar(term):
             return self.value(term)
         else:
-            res  = [term[0]]
+            res = [term[0]]
             args = [self.apply(x) for x in terms.termArgs(term)]
             res.extend(args)
             return res
@@ -161,72 +162,72 @@ class Substitution(object):
             self.subst[var] = term
 
 
-
 class BTSubst(Substitution):
-   """
-   A substitution that does not allow composition of new bindings, but
-   in exchange offers backtrackability. Bindings are recorded in two
-   data structures:
-   self.subst is a dictionary that maps variables to terms
-   self.bindings is an ordered list of bindings.
-   """
-   def __init__(self, init = []):
-      """
-      Initialize. The optional argument is a list of variable/term
-      pairs representing the initial binding. This is taken as-is,
-      without any checks for consistency.
-      """
-      self.bindings = list(init)
-      Substitution.__init__(self, init)
+    """
+    A substitution that does not allow composition of new bindings, but
+    in exchange offers backtrackability. Bindings are recorded in two
+    data structures:
+    self.subst is a dictionary that maps variables to terms
+    self.bindings is an ordered list of bindings.
+    """
 
-   def getState(self):
-      """
-      Return a state to which this substitution can be backtracked
-      later. We encode the state of the binding list, but also the
-      object itself, to allow for some basic sanity checking.
-      """
-      return (self, len(self.bindings))
+    def __init__(self, init=[]):
+        """
+        Initialize. The optional argument is a list of variable/term
+        pairs representing the initial binding. This is taken as-is,
+        without any checks for consistency.
+        """
+        self.bindings = list(init)
+        Substitution.__init__(self, init)
 
-   def backtrack(self):
-      """
-      Backtrack a single binding (if there is one). Return success or
-      failure.
-      """
-      if self.bindings:
-         tmp = self.bindings.pop()
-         del self.subst[tmp[0]]
-         return True
-      else:
-         return False
+    def getState(self):
+        """
+        Return a state to which this substitution can be backtracked
+        later. We encode the state of the binding list, but also the
+        object itself, to allow for some basic sanity checking.
+        """
+        return (self, len(self.bindings))
 
-   def backtrackToState(self, bt_state):
-      """
-      Backtrack to the given state. Note that we only perform very
-      basic sanity checking. Return number of binding retracted.
-      """
-      subst, state = bt_state
-      assert subst == self
-      res = 0
+    def backtrack(self):
+        """
+        Backtrack a single binding (if there is one). Return success or
+        failure.
+        """
+        if self.bindings:
+            tmp = self.bindings.pop()
+            del self.subst[tmp[0]]
+            return True
+        else:
+            return False
 
-      while len(self.bindings)>state:
-         self.backtrack()
-         res = res+1
-      return res
+    def backtrackToState(self, bt_state):
+        """
+        Backtrack to the given state. Note that we only perform very
+        basic sanity checking. Return number of binding retracted.
+        """
+        subst, state = bt_state
+        assert subst == self
+        res = 0
 
-   def addBinding(self, binding):
-      """
-      Add a single binding to the substitution.
-      """
-      var, term = binding
-      self.subst[var] = term
-      self.bindings.append(binding)
+        while len(self.bindings) > state:
+            self.backtrack()
+            res = res + 1
+        return res
 
-   def composeBinding(self, binding): # pragma: no cover
-      """
-      Overloaded to catch usage errors!
-      """
-      assert False and \
-             "You cannot compose backtrackable substitutions."
+    def addBinding(self, binding):
+        """
+        Add a single binding to the substitution.
+        """
+        var, term = binding
+        self.subst[var] = term
+        self.bindings.append(binding)
+
+    def composeBinding(self, binding):  # pragma: no cover
+        """
+        Overloaded to catch usage errors!
+        """
+        assert False and \
+               "You cannot compose backtrackable substitutions."
 
 
 def freshVar():
@@ -236,7 +237,7 @@ def freshVar():
     freshVar() will never return the same variable more than once.
     """
     Substitution.varCounter += 1
-    return "X%d"%(Substitution.varCounter,)
+    return "X%d" % (Substitution.varCounter,)
 
 
 def freshVarSubst(vars):
@@ -252,12 +253,11 @@ def freshVarSubst(vars):
     return Substitution(l)
 
 
-
-
 class TestSubst(unittest.TestCase):
     """
     Test basic substitution functions.
     """
+
     def setUp(self):
         self.t1 = terms.string2Term("f(X, g(Y))")
         self.t2 = terms.string2Term("a")
@@ -286,15 +286,13 @@ class TestSubst(unittest.TestCase):
         t = tau.modifyBinding(("U", None))
         self.assertTrue(not tau.isBound("U"))
 
-
     def testSubstApply(self):
         """
         Check application of substitutions
         """
-        self.assertEqual(terms.term2String(self.sigma1(self.t1)),"f(a,g(a))")
-        self.assertTrue(terms.termEqual(self.sigma1(self.t1),  self.t4))
-        self.assertTrue(terms.termEqual(self.sigma2(self.t1),  self.t5))
-
+        self.assertEqual(terms.term2String(self.sigma1(self.t1)), "f(a,g(a))")
+        self.assertTrue(terms.termEqual(self.sigma1(self.t1), self.t4))
+        self.assertTrue(terms.termEqual(self.sigma2(self.t1), self.t5))
 
     def testFreshVarSubst(self):
         """
@@ -302,7 +300,7 @@ class TestSubst(unittest.TestCase):
         """
         var1 = freshVar()
         var2 = freshVar()
-        self.assertTrue(var1!=var2)
+        self.assertTrue(var1 != var2)
 
         vars = terms.termCollectVars(self.t1)
         sigma = freshVarSubst(vars)
@@ -321,7 +319,6 @@ class TestSubst(unittest.TestCase):
         self.assertEqual(res, 1)
         res = sigma.backtrack()
         self.assertTrue(not res)
-
 
 
 if __name__ == '__main__':

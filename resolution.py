@@ -64,12 +64,11 @@ Email: schulz@eprover.org
 """
 
 import unittest
-from lexer import Lexer
-import substitutions
-from unification import mgu
-from literals import Literal
-from derivations import flatDerivation
+
 import clauses
+from derivations import flatDerivation
+from lexer import Lexer
+from unification import mgu
 
 
 def resolution(clause1, lit1, clause2, lit2):

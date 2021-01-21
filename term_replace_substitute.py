@@ -5,7 +5,7 @@ Replace term on position position by the term term and substitute everything els
 """
 
 
-def term_replace_substitute(term1, pos, term2):
+def termReplaceSubstitute(term1, pos, term2):
     new_parameters = []
     if pos.is_final():
         return term2
@@ -14,7 +14,7 @@ def term_replace_substitute(term1, pos, term2):
     if isinstance(term1, list):
         for i in range(len(term1)):
             if i == pos.get_first():
-                t = term_replace_substitute(subterm(term1, [i]), pos, term2)
+                t = termReplaceSubstitute(subterm(term1, [i]), pos, term2)
                 if t is None:
                     print("term1")
                 new_parameters.append(t)

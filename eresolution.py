@@ -4,8 +4,6 @@ from unification import mgu
 """
 E-resolution inference step
 """
-
-
 def eresolution(clause) -> list:
     res = []
     for l in range(len(clause)):
