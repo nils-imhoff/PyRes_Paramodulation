@@ -13,6 +13,15 @@ class rewriteRule(object):
         self.literals = literals
         self.clause = given_clause
 
+    def __eq__(self, other):
+        if not isinstance(other, rewriteRule):
+            return NotImplemented
+        elif self is other:
+            return True
+        else:
+            return self.frm == other.frm and self.to == other.to and self.literals == other.literals and self.clause.__eq__(
+                other.clause)
+
     def get_from(self):
         return self.frm
 

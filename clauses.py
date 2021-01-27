@@ -46,16 +46,12 @@ Germany
 Email: schulz@eprover.org
 """
 
-import unittest
-from lexer import Token, Lexer
-from derivations import Derivable, Derivation
-from signature import Signature
-from position import Position
-from terms import *
 import substitutions
-from literals import Literal, parseLiteral, parseLiteralList, \
+from derivations import Derivable, Derivation
+from literals import parseLiteralList, \
     literalList2String, litInLitList, oppositeInLitList
-from litselection import firstLit, varSizeLit, eqResVarSizeLit
+from litselection import firstLit, varSizeLit
+from terms import *
 
 
 class Clause(Derivable):
@@ -92,6 +88,14 @@ class Clause(Derivable):
         Return the number of literals in the clause.
         """
         return len(self.literals)
+
+    def __eq__(self, other):
+        if not isinstance(other, Clause):
+            return NotImplemented
+        elif self is other:
+            return True
+        else:
+            return self.literals == other.literals and self.type == other.type and self.evaluation == other.evaluation
 
     def isEmpty(self):
         """
@@ -366,7 +370,6 @@ cnf(dup,axiom,p(a)|q(a)|p(a)).
 
         self.assertTrue(not c1.isHorn())
         self.assertTrue(c3.isHorn())
-
 
         self.assertTrue(c4.isTautology())
         self.assertTrue(not c5.isTautology())

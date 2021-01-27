@@ -91,6 +91,14 @@ class Substitution(object):
         """
         return self.apply(term)
 
+    def __eq__(self, other):
+        if not isinstance(other, Substitution):
+            return NotImplemented
+        elif self is other:
+            return True
+        else:
+            return self.subst == other.subst
+
     def copy(self):
         """
         Return a (flat) copy of the substitution.

@@ -166,6 +166,14 @@ class Literal(object):
             result = result
         return result
 
+    def __eq__(self, other):
+        if not isinstance(other, Literal):
+            return NotImplemented
+        elif self is other:
+            return True
+        else:
+            return self.negative == other.negative and self.atom == other.atom
+
     def isEquational(self):
         """
         Return true if the literal is equational.

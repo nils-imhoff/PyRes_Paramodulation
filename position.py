@@ -13,6 +13,14 @@ class Position(object):
     def create_new(cls, subst, l):
         return cls(subst=subst, l=l[1:])
 
+    def __eq__(self, other):
+        if not isinstance(other, Position):
+            return NotImplemented
+        elif self is other:
+            return True
+        else:
+            return self.l == other.l and self.subst.__eq__(other.subst)
+
     def add_first(self, i):
         self.l.insert(0, i)
 
