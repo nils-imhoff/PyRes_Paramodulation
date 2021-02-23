@@ -1,4 +1,4 @@
-## A fork of https://github.com/eprover/PyRes.git in the course of my student research project 
+# A fork of https://github.com/eprover/PyRes.git in the course of my student research project 
 
 This code implements simple, resolution-based theorem provers for
 first-order logic. It is released as free software under the GNU GPL
