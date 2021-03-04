@@ -21,7 +21,7 @@ identity, match (for a query term t, find all terms s for which a
 substitution sigma exists such that sigma(s)=t), instance (for a query
 term t, find all terms s for which a substitution sigma exists such
 that s=sigma(t), and unifiability (find all terms with a sigma such
-that sigma(s)=sigma(t). 
+that sigma(s)=sigma(t).
 
 Clause indexed directly index clauses, typically by abstracting a
 clause into some kind of sequential vector. Typical retrieval
@@ -59,7 +59,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program ; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston,
-MA  02111-1307 USA 
+MA  02111-1307 USA
 
 The original copyright holder can be contacted as
 
@@ -96,6 +96,13 @@ class ResolutionIndex(object):
         self.neg_idx = {}
 
     def insertData(self, idx, topsymbol, payload):
+        """
+        Insert the payload into the provided index, associating it
+        with the given top symbol (i.e. the predicate symbol of the
+        indexed literal). The payload here is a tuple (clause, pos),
+        where pos is the position of the indexed literal in the clause
+        (counting from 0).
+        """
         if not topsymbol in idx:
             idx[topsymbol] = set()
         idx[topsymbol].add(payload)
@@ -104,6 +111,11 @@ class ResolutionIndex(object):
         idx[topsymbol].remove(payload)
 
     def insertClause(self, clause):
+        """
+        Insert all inference literals of clause into the appropriate
+        index (positive or negative, depending on the sign of the
+        literal).
+        """
         for i in range(len(clause)):
             lit = clause.getLiteral(i)
             if lit.isInferenceLit():
@@ -113,6 +125,9 @@ class ResolutionIndex(object):
                     self.insertData(self.neg_idx, termFunc(lit.atom), (clause, i))
 
     def removeClause(self, clause):
+        """
+        Remove all inference literals of the clause from the index.
+        """
         for i in range(len(clause)):
             lit = clause.getLiteral(i)
             if lit.isInferenceLit():
@@ -122,6 +137,12 @@ class ResolutionIndex(object):
                     self.removeData(self.neg_idx, termFunc(lit.atom), (clause, i))
 
     def getResolutionLiterals(self, lit):
+        """
+        Return a list of resolution candidates for lit. Every
+        candidate is a pair (clause, pos), where pos is the position
+        of the literal that potentially unifies with lit (and has the
+        opposite sign).
+        """
         if lit.isPositive():
             idx = self.neg_idx
         else:
@@ -130,7 +151,6 @@ class ResolutionIndex(object):
             return list(idx[termFunc(lit.atom)])
         except KeyError:
             return list()
-
 
 def predAbstractionIsSubSequence(candidate, superseq):
     """
@@ -288,7 +308,7 @@ cnf(c9,axiom, p(X,Y)).
     def testResolutionInsertRemove(self):
         """
         Test inserting and removal of clauses into the resolution
-        index. 
+        index.
         """
         index = ResolutionIndex()
         index.insertClause(self.c1)
@@ -431,19 +451,19 @@ cnf(c9,axiom, p(X,Y)).
         cands = index.subsumingCandidates(self.c1)
         print(cands)
         self.assertEqual(len(cands), 3)
-        cands = index.subsumingCandidates(self.c9)
+        cands = index.getSubsumingCandidates(self.c9)
         print(cands)
         self.assertEqual(len(cands), 1)
 
-        cands = index.subsumedCandidates(self.c9)
+        cands = index.getSubsumedCandidates(self.c9)
         print(cands)
         self.assertEqual(len(cands), 5)
 
-        cands = index.subsumedCandidates(self.c8)
+        cands = index.getSubsumedCandidates(self.c8)
         print(cands)
         self.assertEqual(len(cands), 0)
 
-        cands = index.subsumedCandidates(self.c5)
+        cands = index.getSubsumedCandidates(self.c5)
         print(cands)
         self.assertEqual(len(cands), 1)
 

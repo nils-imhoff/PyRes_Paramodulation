@@ -171,7 +171,8 @@ def formulaTopSimplify(f):
     """
     Try to apply the following simplification rules to f at the top
     level. Return (f',m), where f' is the result of simplification,
-    and m indicates if f'!=f.
+    and m indicates if f'!=f, i.e. if any of the simplification rules
+    has been applied.
     """
     if f.op == "~":
         if f.child1.isLiteral():
@@ -264,10 +265,13 @@ def formulaTopSimplify(f):
 
 def formulaSimplify(f):
     """
-    Exhaustively apply simplification to f. See formulaTopSimplify()
-    above for the
+    Exhaustively apply simplification to f, creating the simplified
+    version f'. See formulaTopSimplify()
+    above for the individual rules.
 
-    Returns (f', True) if f!=f, (f', False) otherwise.
+    Returns (f', True) if f'!=f, (f', False) otherwise (i.e. if no
+    simplification happened because the formula already was completely
+    simplified.
     """
     if f.isLiteral():
         return f, False
@@ -834,8 +838,11 @@ fof(testscosko, axiom, (![X]:?[Y]:((p(X)&q(X))|q(X,Y))|a)).
 
     def checkSimplificationResult(self, f):
         """
-        A simplified formula has no $true/$false, or it is a literal
-        (in which case it's either true or false).
+        Simplification results in a formula that does not contain
+        the constant predicates $true or $false. The only exception is
+        when the whole formula has been has been reduced to a single
+        literal (in which case it can be either $true, or $false, or
+        any other literal).
         """
 
         funs = f.collectFuns()
