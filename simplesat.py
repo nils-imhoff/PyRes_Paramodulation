@@ -83,8 +83,7 @@ class SimpleProofState(object):
         resolvents = computeAllResolvents(given_clause, self.processed)
         new.extend(resolvents)
         modulated = computeAllParamodulates(given_clause, self.processed)
-        if modulated:
-            new.extend(modulated)
+        new.extend(modulated)
 
         self.processed.addClause(given_clause)
 
