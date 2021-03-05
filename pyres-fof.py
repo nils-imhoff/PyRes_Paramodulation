@@ -88,24 +88,26 @@ Email: schulz@eprover.org
 
 """
 
-import getopt
 import sys
 from resource import RLIMIT_STACK, setrlimit, getrlimit
+import getopt
+from signal import  signal, SIGXCPU
 from resource import getrusage, RUSAGE_SELF
-from signal import signal, SIGXCPU
-
-from derivations import enableDerivationOutput, disableDerivationOutput, Derivable, flatDerivation
+from version import version
+from lexer import Token,Lexer
+from derivations import enableDerivationOutput,disableDerivationOutput,Derivable,flatDerivation
+from clausesets import ClauseSet
+from clauses import firstLit, varSizeLit, eqResVarSizeLit
 from fofspec import FOFSpec
 from heuristics import GivenClauseHeuristics
+from saturation import SearchParams,ProofState
 from litselection import LiteralSelectors
-from saturation import SearchParams, ProofState
-from version import version
+
 
 suppressEqAxioms = False
-silent = False
-indexed = False
-proofObject = False
-
+silent           = False
+indexed          = False
+proofObject      = False
 
 def processOptions(opts):
     """
@@ -116,42 +118,41 @@ def processOptions(opts):
     params = SearchParams()
     for opt, optarg in opts:
         if opt == "-h" or opt == "--help":
-            print("pyres-fof.py " + version)
+            print("pyres-fof.py "+version)
             print(__doc__)
             sys.exit()
-        elif opt == "-s" or opt == "--silent":
+        elif opt=="-s" or opt == "--silent":
             silent = True
-        elif opt == "-V" or opt == "--version":
+        elif opt=="-V" or opt == "--version":
             print("# Version: ", version)
-        elif opt == "-p" or opt == "--proof":
+        elif opt=="-p" or opt == "--proof":
             proofObject = True
-        elif opt == "-i" or opt == "--index":
+        elif opt=="-i" or opt == "--index":
             indexed = True
-        elif opt == "-t" or opt == "--delete-tautologies":
+        elif opt=="-t" or opt == "--delete-tautologies":
             params.delete_tautologies = True
-        elif opt == "-f" or opt == "--forward-subsumption":
+        elif opt=="-f" or opt == "--forward-subsumption":
             params.forward_subsumption = True
-        elif opt == "-b" or opt == "--backward-subsumption":
+        elif opt=="-b" or opt == "--backward-subsumption":
             params.backward_subsumption = True
-        elif opt == "-H" or opt == "--given-clause-heuristic":
+        elif opt=="-H" or opt == "--given-clause-heuristic":
             try:
                 params.heuristics = GivenClauseHeuristics[optarg]
             except KeyError:
                 print("Unknown clause evaluation function", optarg)
                 print("Supported:", GivenClauseHeuristics.keys())
                 sys.exit(1)
-        elif opt == "-n" or opt == "--neg-lit-selection":
+        elif opt=="-n" or opt == "--neg-lit-selection":
             try:
                 params.literal_selection = LiteralSelectors[optarg]
             except KeyError:
                 print("Unknown literal selection function", optarg)
                 print("Supported:", LiteralSelectors.keys())
                 sys.exit(1)
-        elif opt == "-S" or opt == "--suppress-eq-axioms":
+        elif opt=="-S" or opt=="--suppress-eq-axioms":
             suppressEqAxioms = True
 
     return params
-
 
 def timeoutHandler(sign, frame):
     """
@@ -171,7 +172,7 @@ if __name__ == '__main__':
     # it is a bit more complex than I would hope for.
     try:
         soft, hard = getrlimit(RLIMIT_STACK)
-        soft = 10 * soft
+        soft = 10*soft
         if hard > 0 and soft > hard:
             soft = hard
         setrlimit(RLIMIT_STACK, (soft, hard))
@@ -198,7 +199,7 @@ if __name__ == '__main__':
                                         "neg-lit-selection="
                                         "supress-eq-axioms"])
     except getopt.GetoptError as err:
-        print(sys.argv[0], ":", err)
+        print(sys.argv[0],":", err)
         sys.exit(1)
 
     params = processOptions(opts)
@@ -248,7 +249,7 @@ if __name__ == '__main__':
     # We use the resources interface to get and print the CPU time
     resources = getrusage(RUSAGE_SELF)
     print("# -------- CPU Time ---------")
-    print("# User time          : %.3f s" % (resources.ru_utime,))
-    print("# System time        : %.3f s" % (resources.ru_stime,))
-    print("# Total time         : %.3f s" % (resources.ru_utime +
-                                             resources.ru_stime,))
+    print("# User time          : %.3f s"%(resources.ru_utime,))
+    print("# System time        : %.3f s"%(resources.ru_stime,))
+    print("# Total time         : %.3f s"%(resources.ru_utime+
+                                           resources.ru_stime,))

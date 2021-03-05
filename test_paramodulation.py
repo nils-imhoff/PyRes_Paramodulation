@@ -96,8 +96,10 @@ cnf(prove_equation,negated_conjecture,
     def test_apply_should_succeed_if_new_clauses_are_correct(self):
         to = ['add', 'B', 'A']
         frm = ['add', 'A', 'B']
-        expectedLiteral = literals.Literal(['=', ['subtract', ['add', 'B', 'A'], 'C'], ['add', ['subtract', 'A', 'C'], 'B']])
+        expectedLiteral = literals.Literal(
+            ['=', ['subtract', ['add', 'B', 'A'], 'C'], ['add', ['subtract', 'A', 'C'], 'B']])
         expectedClause = clauses.Clause([expectedLiteral])
         rewrite_rule = rewriterule.rewriteRule(frm, to, [], self.c1)
         res = rewrite_rule.apply(self.c3)
         self.assertEqual(expectedClause, res[0])
+

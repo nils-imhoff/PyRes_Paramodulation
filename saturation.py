@@ -182,12 +182,15 @@ class ProofState(object):
             print("#", given_clause)
         new = []
         factors = computeAllFactors(given_clause)
-        new.extend(factors)
-        eresolvents = eresolution(given_clause)
-        new.extend(eresolvents)
+        # new.extend(factors)
+        # eresolvents = eresolution(given_clause)
+        # if eresolvents:
+        #     new.extend(eresolvents)
         resolvents = computeAllResolvents(given_clause, self.processed)
         new.extend(resolvents)
         modulated = computeAllParamodulates(given_clause, self.processed)
+        # if modulated:
+       # print("Modulated", modulated)
         new.extend(modulated)
         self.proc_clause_count = self.proc_clause_count + 1
         self.factor_count = self.factor_count + len(factors)

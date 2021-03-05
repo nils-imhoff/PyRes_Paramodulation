@@ -72,10 +72,10 @@ Email: schulz@eprover.org
 """
 
 import unittest
-
-import clauses
-from lexer import Lexer
+from lexer import Token,Lexer
 from terms import termFunc
+from literals import Literal
+import clauses
 
 
 class ResolutionIndex(object):
@@ -86,7 +86,6 @@ class ResolutionIndex(object):
     polarity of the query literal and the same top symbol (i.e. we
     implement a simple version of top symbol hashing).
     """
-
     def __init__(self):
         """
         We use separate dicts for mapping predicate symbols to
@@ -94,6 +93,7 @@ class ResolutionIndex(object):
         """
         self.pos_idx = {}
         self.neg_idx = {}
+
 
     def insertData(self, idx, topsymbol, payload):
         """
@@ -108,6 +108,10 @@ class ResolutionIndex(object):
         idx[topsymbol].add(payload)
 
     def removeData(self, idx, topsymbol, payload):
+        """
+        Remove a payload indexed at topsymbol from the provided
+        index.
+        """
         idx[topsymbol].remove(payload)
 
     def insertClause(self, clause):
@@ -162,9 +166,9 @@ def predAbstractionIsSubSequence(candidate, superseq):
     end = len(superseq)
     try:
         for la in candidate:
-            while superseq[i] != la:
-                i = i + 1
-            i = i + 1
+            while superseq[i]!=la:
+                i = i+1
+            i = i+1
     except IndexError:
         return False
     return True
@@ -179,7 +183,6 @@ class SubsumptionIndex(object):
     abstraction is a subset of c's predicate abstraction, we can
     exclude whole sets of clauses at once.
     """
-
     def __init__(self):
         """
         We store predicate abstractions (with associated clauses) in a
@@ -201,7 +204,7 @@ class SubsumptionIndex(object):
         pa = clause.predicateAbstraction()
 
         try:
-            entry = self.pred_abstr_set[pa]
+            entry =  self.pred_abstr_set[pa]
         except KeyError:
             entry = set()
             self.pred_abstr_set[pa] = entry
@@ -210,7 +213,7 @@ class SubsumptionIndex(object):
             for (len_pa, spa, clauses) in self.pred_abstr_arr:
                 if len_pa >= l:
                     break
-                i = i + 1
+                i = i+1
             self.pred_abstr_arr.insert(i, (l, pa, entry))
 
         entry.add(clause)
@@ -234,7 +237,7 @@ class SubsumptionIndex(object):
         pa = clause.predicateAbstraction()
 
         try:
-            entry = self.pred_abstr_set[pa]
+            entry =  self.pred_abstr_set[pa]
             return clause in entry
         except KeyError:
             return False
@@ -277,7 +280,6 @@ class TestIndexing(unittest.TestCase):
     Unit test class for clauses. Test clause and literal
     functionality.
     """
-
     def setUp(self):
         """
         Setup function for resolution testing
@@ -354,11 +356,12 @@ cnf(c9,axiom, p(X,Y)).
         index.insertClause(self.c4)
         index.insertClause(self.c5)
 
+        print("testResolutionRetrieval()")
         lit = self.c6.getLiteral(0)
         cands = index.getResolutionLiterals(lit)
         print(cands)
-        self.assertTrue(len(cands), 7)
-        for (c, i) in cands:
+        self.assertEqual(len(cands), 8)
+        for (c,i) in cands:
             l = c.getLiteral(i)
             self.assertEqual(l.isNegative(), not lit.isNegative())
             self.assertEqual(termFunc(l.atom), termFunc(lit.atom))
@@ -366,8 +369,8 @@ cnf(c9,axiom, p(X,Y)).
         lit = self.c7.getLiteral(0)
         cands = index.getResolutionLiterals(lit)
         print(cands)
-        self.assertTrue(len(cands), 3)
-        for (c, i) in cands:
+        self.assertEqual(len(cands), 3)
+        for (c,i) in cands:
             l = c.getLiteral(i)
             self.assertEqual(l.isNegative(), not lit.isNegative())
             self.assertEqual(termFunc(l.atom), termFunc(lit.atom))
@@ -448,7 +451,7 @@ cnf(c9,axiom, p(X,Y)).
         self.assertTrue(index.isIndexed(self.c6))
         self.assertTrue(index.isIndexed(self.c9))
 
-        cands = index.subsumingCandidates(self.c1)
+        cands = index.getSubsumingCandidates(self.c1)
         print(cands)
         self.assertEqual(len(cands), 3)
         cands = index.getSubsumingCandidates(self.c9)
