@@ -151,6 +151,8 @@ def processOptions(opts):
                 sys.exit(1)
         elif opt=="-S" or opt=="--suppress-eq-axioms":
             suppressEqAxioms = True
+        elif opt=="-P" or opt=="--paramodulation":
+            params.para_flag = True
 
     return params
 
@@ -186,7 +188,7 @@ if __name__ == '__main__':
 
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:],
-                                       "hsVpitfbH:n:S",
+                                       "SPhsVpitfbH:n",
                                        ["help",
                                         "silent",
                                         "version",
@@ -196,8 +198,9 @@ if __name__ == '__main__':
                                         "forward-subsumption",
                                         "backward-subsumption"
                                         "given-clause-heuristic=",
-                                        "neg-lit-selection="
-                                        "supress-eq-axioms"])
+                                        "neg-lit-selection=",
+                                        "supress-eq-axioms",
+                                        "paramodulation"])
     except getopt.GetoptError as err:
         print(sys.argv[0],":", err)
         sys.exit(1)

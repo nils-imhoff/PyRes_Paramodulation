@@ -3,7 +3,7 @@
 
 class Position(object):
 
-    def __init__(self, subst: object, l: object = None):
+    def __init__(self, subst, l = None):
         if l is None:
             l = []
         self.l = l

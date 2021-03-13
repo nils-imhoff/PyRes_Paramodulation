@@ -269,7 +269,7 @@ class Clause(Derivable):
         new_literals = []
         for i in range(len(self)):
             if i == pos.get_first():
-                l: object = self.getLiteral(i).replaceSubstitute(pos.pop(), term)
+                l = self.getLiteral(i).replaceSubstitute(pos.pop(), term)
                 if l is None:
                     return None
                 new_literals.append(l)

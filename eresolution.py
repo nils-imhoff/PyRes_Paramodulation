@@ -25,7 +25,7 @@ def eresolution(clause) -> list:
                         else:
                             others.append(lit2.instantiate(unifier))
 
-                new_clause: Clause = Clause(others)
+                new_clause = Clause(others)
 
                 res.append(new_clause)
     return res

@@ -5,8 +5,9 @@ def computeAllParamodulates(clause, clauseset):
     res = []
     rewrite_rules = createRewriteRule(clause)
     if rewrite_rules:
+        res.extend(paramodulation(clause, rewrite_rules))
         for i in range(len(clauseset)):
-            res.extend(paramodulation(clause, clauseset.clauses[i], rewrite_rules))
+            res.extend(paramodulation(clauseset.clauses[i], rewrite_rules))
 
     return res
 
@@ -35,12 +36,9 @@ def createRewriteRule(given_clause):
     return new_rewrite_rules
 
 
-def paramodulation(given_clause, second_clause, rewrite_rules):
+def paramodulation(given_clause, rewrite_rules):
     res = []
     for r in rewrite_rules:
         res.extend(r.apply(given_clause))
-
-    for r in rewrite_rules:
-        res.extend(r.apply(second_clause))
 
     return res

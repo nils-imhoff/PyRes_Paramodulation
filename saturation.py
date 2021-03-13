@@ -65,7 +65,7 @@ class SearchParams(object):
                  delete_tautologies=False,
                  forward_subsumption=False,
                  backward_subsumption=False,
-                 literal_selection=None):
+                 literal_selection=None, para_flag =False):
         """
         Initialize heuristic parameters.
         """
@@ -97,6 +97,11 @@ class SearchParams(object):
         literals from a set of negative literals (both represented as
         lists, not Python sets) as the inference literal.
         """
+        self.para_flag = para_flag
+        """
+        Use Paramodulation and Eresolution
+        """
+
 
 
 class ProofState(object):
@@ -182,16 +187,15 @@ class ProofState(object):
             print("#", given_clause)
         new = []
         factors = computeAllFactors(given_clause)
-        # new.extend(factors)
-        # eresolvents = eresolution(given_clause)
-        # if eresolvents:
-        #     new.extend(eresolvents)
+        new.extend(factors)
+        if self.params.para_flag:
+            eresolvents = eresolution(given_clause)
+            new.extend(eresolvents)
         resolvents = computeAllResolvents(given_clause, self.processed)
         new.extend(resolvents)
-        modulated = computeAllParamodulates(given_clause, self.processed)
-        # if modulated:
-       # print("Modulated", modulated)
-        new.extend(modulated)
+        if self.params.para_flag:
+            modulated = computeAllParamodulates(given_clause, self.processed)
+            new.extend(modulated)
         self.proc_clause_count = self.proc_clause_count + 1
         self.factor_count = self.factor_count + len(factors)
         self.resolvent_count = self.resolvent_count + len(resolvents)
