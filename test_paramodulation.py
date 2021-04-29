@@ -53,7 +53,6 @@ cnf(prove_equation,negated_conjecture,
         expectedPos4 = position.Position(subst1, [0, 2, 1])
 
         self.assertEqual(2, len(pos))
-        self.assertEqual({'B': 'A'}, pos[1].get_unifier().subst)
         self.assertEqual(expectedPos1, pos[0])
         self.assertEqual(expectedPos2, pos[1])
 
@@ -91,7 +90,7 @@ cnf(prove_equation,negated_conjecture,
         clause = self.c3.replaceSubstitute(pos, ['add', 'B', 'A'])
         expectedLiteral = literals.Literal(['=', ['subtract', ['add', 'B', 'A'], 'C'], ['add', ['subtract', 'A', 'C'], 'B']])
         expectedClause = clauses.Clause([expectedLiteral])
-        self.assertEqual(expectedClause, clause)
+        self.assertEqual(expectedClause.compare(clause), True)
 
     def test_apply_should_succeed_if_new_clauses_are_correct(self):
         to = ['add', 'B', 'A']
@@ -101,5 +100,7 @@ cnf(prove_equation,negated_conjecture,
         expectedClause = clauses.Clause([expectedLiteral])
         rewrite_rule = rewriterule.rewriteRule(frm, to, [], self.c1)
         res = rewrite_rule.apply(self.c3)
-        self.assertEqual(expectedClause, res[0])
+        print(res[0].evaluation)
+        print(expectedClause.evaluation)
+        self.assertTrue(expectedClause.compare(res[0]))
 

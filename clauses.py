@@ -93,13 +93,15 @@ class Clause(Derivable):
         """
         return len(self.literals)
 
-    def __eq__(self, other):
+
+    def compare(self, other):
         if not isinstance(other, Clause):
             return NotImplemented
         elif self is other:
             return True
         else:
-            return self.literals == other.literals and self.type == other.type and self.evaluation == other.evaluation
+            return  self.type == other.type and self.evaluation == other.evaluation
+
 
     def isEmpty(self):
         """

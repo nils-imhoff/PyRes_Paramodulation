@@ -36,7 +36,7 @@ TAGS: *.py
 
 
 distrib: clean
-	cd ..; tar czf PyRes.tgz PyRes
+	cd ..; tar czf PyRes_Paramodulation.tgz PyRes_Paramodulation
 
 starexec: clean
 	echo $(STAREXECPATH)

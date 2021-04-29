@@ -19,7 +19,7 @@ class rewriteRule(object):
         elif self is other:
             return True
         else:
-            return self.frm == other.frm and self.to == other.to and self.literals == other.literals and self.clause.__eq__(
+            return self.frm == other.frm and self.to == other.to  and self.clause.compare(
                 other.clause)
 
     def get_from(self):
@@ -44,5 +44,6 @@ class rewriteRule(object):
                             print("rewrite")
                         new_clause.addLiteral(l)
                     new_clause.setDerivation(flatDerivation("paramodulation", [self.clause, clause]))
+                    print(new_clause)
                     res.append(new_clause)
         return res

@@ -1,9 +1,12 @@
 from clauses import Clause
+from derivations import flatDerivation
 from unification import mgu
 
 """
 E-resolution inference step
 """
+
+
 def eresolution(clause) -> list:
     res = []
     for l in range(len(clause)):
@@ -13,7 +16,6 @@ def eresolution(clause) -> list:
             right = lit.atom[2]
 
             unifier = mgu(left, right)
-
             if unifier is not None:
                 others = []
 
@@ -26,6 +28,8 @@ def eresolution(clause) -> list:
                             others.append(lit2.instantiate(unifier))
 
                 new_clause = Clause(others)
+
+                new_clause.setDerivation(flatDerivation("eresolution", [clause, clause]))
 
                 res.append(new_clause)
     return res

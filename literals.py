@@ -69,7 +69,7 @@ Germany
 Email: schulz@eprover.org
 """
 
-from findPosition import find_term
+from findPosition import termFind
 from matching import match
 from substitutions import BTSubst
 from term_replace_substitute import termReplaceSubstitute
@@ -166,7 +166,7 @@ class Literal(object):
             result = result
         return result
 
-    def __eq__(self, other):
+    def compare(self, other):
         if not isinstance(other, Literal):
             return NotImplemented
         elif self is other:
@@ -334,7 +334,7 @@ class Literal(object):
     def find(self, term):
         term_positions = []
         for i in range(len(self.atom)):
-            term_positions2 = find_term(subterm(self.atom, [i]), term)
+            term_positions2 = termFind(subterm(self.atom, [i]), term)
             if term_positions2 is not None:
                 for termPosition2 in term_positions2:
                     termPosition2.add_first(i)

@@ -188,7 +188,7 @@ if __name__ == '__main__':
 
     try:
         opts, args = getopt.gnu_getopt(sys.argv[1:],
-                                       "SPhsVpitfbH:n",
+                                       "PhsVpitfbH:n:S",
                                        ["help",
                                         "silent",
                                         "version",
@@ -198,7 +198,7 @@ if __name__ == '__main__':
                                         "forward-subsumption",
                                         "backward-subsumption"
                                         "given-clause-heuristic=",
-                                        "neg-lit-selection=",
+                                        "neg-lit-selection="
                                         "supress-eq-axioms",
                                         "paramodulation"])
     except getopt.GetoptError as err:
