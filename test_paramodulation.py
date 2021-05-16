@@ -7,6 +7,8 @@ import position
 import rewriterule
 import substitutions
 from lexer import Lexer
+from terms import termIsVar
+from unification import mgu
 
 
 class TestClause(TestCase):
@@ -33,6 +35,10 @@ cnf(add_substitution1,axiom,
 
 cnf(prove_equation,negated_conjecture,
     ( add(add(a,b),c) != add(a,add(b,c)) )).
+    
+cnf(n_right_equals_right_child_of_n,plain,n_right=right_child_of(n)).
+cnf(halfthere,plain,siblings(n_left,right_child_of(n))).
+
     """
         lex = Lexer(self.spec)
         self.c1 = clauses.parseClause(lex)
@@ -40,6 +46,8 @@ cnf(prove_equation,negated_conjecture,
         self.c3 = clauses.parseClause(lex)
         self.c4 = clauses.parseClause(lex)
         self.c5 = clauses.parseClause(lex)
+        self.c6 = clauses.parseClause(lex)
+        self.c7 = clauses.parseClause(lex)
 
     def test_find_should_succeed_term_is_found(self):
         pos = self.c1.find(['add', 'A', 'B'])
@@ -63,7 +71,6 @@ cnf(prove_equation,negated_conjecture,
     def test_createRewriteRule_should_succeed_if_rule_is_created(self):
         rewrite_rules1 = paracontrol.createRewriteRule(self.c1)
         rewrite_rules2 = paracontrol.createRewriteRule(self.c4)
-
         expectedLiteral1 = literals.Literal(['=', 'A', 'B'], True)
         expectedLiteral2 = literals.Literal(['=', 'C', ['add', 'A', 'D']], True)
         expectedLiterals = [expectedLiteral1, expectedLiteral2]
@@ -93,6 +100,7 @@ cnf(prove_equation,negated_conjecture,
         self.assertEqual(expectedClause.compare(clause), True)
 
     def test_apply_should_succeed_if_new_clauses_are_correct(self):
+        rewrite_rules3 = paracontrol.createRewriteRule(self.c6)
         to = ['add', 'B', 'A']
         frm = ['add', 'A', 'B']
         expectedLiteral = literals.Literal(
@@ -100,7 +108,7 @@ cnf(prove_equation,negated_conjecture,
         expectedClause = clauses.Clause([expectedLiteral])
         rewrite_rule = rewriterule.rewriteRule(frm, to, [], self.c1)
         res = rewrite_rule.apply(self.c3)
-        print(res[0].evaluation)
-        print(expectedClause.evaluation)
         self.assertTrue(expectedClause.compare(res[0]))
+        res2 = rewrite_rules3[1].apply(self.c7)
+        print(res2)
 

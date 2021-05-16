@@ -1,16 +1,18 @@
 from rewriterule import rewriteRule
 
 
-def computeAllParamodulates(clause, clauseset):
+def computeAllParamodulates(clause, clauseset, rewrite_rules):
     res = []
-    rewrite_rules = createRewriteRule(clause)
+    rewrite_rules.extend(createRewriteRule(clause))
     if rewrite_rules:
-        clause = clause.freshVarCopy()
         res.extend(paramodulation(clause, rewrite_rules))
         for i in range(len(clauseset)):
+            if clause.name == "n_right_equals_right_child_of_n":
+                print("hier")
+                print(clauseset.clauses[i].name)
             res.extend(paramodulation(clauseset.clauses[i], rewrite_rules))
 
-    return res
+    return res, rewrite_rules
 
 
 def createRewriteRule(given_clause):
@@ -40,6 +42,8 @@ def createRewriteRule(given_clause):
 def paramodulation(given_clause, rewrite_rules):
     res = []
     for r in rewrite_rules:
+        if(r.clause.name == given_clause.name):
+            given_clause = given_clause.freshVarCopy()
         res.extend(r.apply(given_clause))
 
     return res

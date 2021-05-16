@@ -43,7 +43,7 @@ class rewriteRule(object):
                         if l is None:
                             print("rewrite")
                         new_clause.addLiteral(l)
-                    new_clause.setDerivation(flatDerivation("paramodulation", [self.clause, clause]))
-                    print(new_clause)
-                    res.append(new_clause)
+                    if new_clause.isTautology() == False:
+                        new_clause.setDerivation(flatDerivation("paramodulation", [self.clause, clause]))
+                        res.append(new_clause)
         return res

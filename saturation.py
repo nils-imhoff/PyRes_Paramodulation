@@ -140,6 +140,7 @@ class ProofState(object):
         self.forward_subsumed = 0
         self.backward_subsumed = 0
         self.silent = silent
+        self.rewrite_rules=[]
 
     @property
     def processClause(self):
@@ -194,8 +195,9 @@ class ProofState(object):
         resolvents = computeAllResolvents(given_clause, self.processed)
         new.extend(resolvents)
         if self.params.para_flag:
-            modulated = computeAllParamodulates(given_clause, self.processed)
-            new.extend(modulated)
+            paramodulated = computeAllParamodulates(given_clause, self.processed, self.rewrite_rules)
+            new.extend(paramodulated[0])
+            self.rewrite_rules = paramodulated[1]
         self.proc_clause_count = self.proc_clause_count + 1
         self.factor_count = self.factor_count + len(factors)
         self.resolvent_count = self.resolvent_count + len(resolvents)

@@ -45,4 +45,4 @@ starexec: clean
 	find . -name ".#*"  -exec rm {} \;
 	cp *.py starexec_run_* $(STAREXECPATH)/bin
 	cp README $(STAREXECPATH)
-	cd $(STAREXECPATH); zip -r PyRes.zip bin
+	cd $(STAREXECPATH); zip -r PyRes_Paramodulation.zip bin

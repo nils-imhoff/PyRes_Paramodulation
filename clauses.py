@@ -280,7 +280,6 @@ class Clause(Derivable):
                 if l is None:
                     return None
                 new_literals.append(l)
-
         return Clause(new_literals)
 
 
